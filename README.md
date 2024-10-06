@@ -8,5 +8,10 @@ O artigo [BitTorrent traffic from a caching perspective](https://doi.org/10.1007
 
 ## Equações relevantes
 
+Distribuição Weibull: [``weibull.data``](weibull.data);
+Distribuição Log-Normal: [``log_normal.data``](log_normal.data);
 
+## Códigos
 
+Gráfico: Código [``grafico.py``](grafico.py);
+Dados: Código [``data.java``](data.java);
