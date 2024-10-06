@@ -16,4 +16,4 @@ Distribuição Log-Normal: [``log_normal.data``](log_normal.data);
 
 Gráfico: Código [``grafico.py``](grafico.py);
 
-Dados: Código [``data.java``](data.java);
+Dados: Código [``data.py``](data.py);
