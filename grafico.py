@@ -3,26 +3,21 @@ from collections import defaultdict
 from scipy.stats import weibull_min, lognorm
 import matplotlib.pyplot as plt
 
-# Parâmetros do cache
-CACHE_SIZE = 100  # Tamanho do cache
-NUM_REQUESTS = 10000  # Número de requisições simuladas
-NUM_OBJECTS = 1000  # Número de objetos disponíveis
+CACHE_SIZE = 100  
+NUM_REQUESTS = 10000  
+NUM_OBJECTS = 1000 
 
-# Função para gerar popularidade com distribuição Weibull
 def generate_weibull_data(shape, scale, size):
     return weibull_min.rvs(c=shape, scale=scale, size=size)
 
-# Função para gerar popularidade com distribuição Log-Normal
 def generate_lognormal_data(mean, sigma, size):
     return lognorm.rvs(sigma, scale=np.exp(mean), size=size)
 
-# Função para gerar popularidade com distribuição uniforme (para comparar com LFU)
 def generate_uniform_data(size):
     return np.random.uniform(0, 1, size)
 
-# Implementação do cache LFU
 class LFUCache:
-    def _init_(self, capacity):
+    def __init__(self, capacity):
         self.capacity = capacity
         self.cache = {}
         self.freq = defaultdict(int)
@@ -30,18 +25,16 @@ class LFUCache:
     def access(self, obj):
         if obj in self.cache:
             self.freq[obj] += 1
-            return True  # Cache hit
+            return True  
         else:
             if len(self.cache) >= self.capacity:
-                # Remover o objeto menos frequentemente usado
                 lfu_obj = min(self.cache, key=lambda k: self.freq[k])
                 del self.cache[lfu_obj]
                 del self.freq[lfu_obj]
             self.cache[obj] = True
             self.freq[obj] = 1
-            return False  # Cache miss
+            return False  
 
-# Simulação de acessos
 def simulate_requests(popularity_data, cache):
     hits = 0
     total_requests = len(popularity_data)
@@ -53,7 +46,6 @@ def simulate_requests(popularity_data, cache):
     hit_rate = hits / total_requests
     return hit_rate
 
-# Função para visualizar os resultados
 def plot_results(results):
     policies = list(results.keys())
     hit_rates = list(results.values())
@@ -64,29 +56,23 @@ def plot_results(results):
     plt.title('Comparação de Políticas de Cache')
     plt.show()
 
-# Função principal
 def main():
-    # Gerar dados de popularidade
     weibull_popularity = generate_weibull_data(shape=1.5, scale=1.0, size=NUM_REQUESTS)
     lognormal_popularity = generate_lognormal_data(mean=0, sigma=1.0, size=NUM_REQUESTS)
     uniform_popularity = generate_uniform_data(NUM_REQUESTS)
     
-    # Normalizar os dados para simular objetos de 0 a NUM_OBJECTS-1
     weibull_popularity = np.floor(weibull_popularity * NUM_OBJECTS / max(weibull_popularity)).astype(int)
     lognormal_popularity = np.floor(lognormal_popularity * NUM_OBJECTS / max(lognormal_popularity)).astype(int)
     uniform_popularity = np.floor(uniform_popularity * NUM_OBJECTS / max(uniform_popularity)).astype(int)
 
-    # Inicializar o cache LFU
     lfu_cache_weibull = LFUCache(CACHE_SIZE)
     lfu_cache_lognormal = LFUCache(CACHE_SIZE)
     lfu_cache_uniform = LFUCache(CACHE_SIZE)
 
-    # Simular acessos e calcular taxas de acerto
     hit_rate_weibull = simulate_requests(weibull_popularity, lfu_cache_weibull)
     hit_rate_lognormal = simulate_requests(lognormal_popularity, lfu_cache_lognormal)
     hit_rate_uniform = simulate_requests(uniform_popularity, lfu_cache_uniform)
 
-    # Exibir os resultados
     results = {
         "Weibull (LFU)": hit_rate_weibull,
         "Log-Normal (LFU)": hit_rate_lognormal,
@@ -97,8 +83,7 @@ def main():
     for policy, hit_rate in results.items():
         print(f"{policy}: {hit_rate * 100:.2f}%")
 
-    # Plotar os resultados
     plot_results(results)
-
-if _name_ == "_main_":
+    
+if __name__ == "__main__":
     main()
