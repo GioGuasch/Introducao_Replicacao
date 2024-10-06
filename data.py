@@ -17,7 +17,7 @@ def generate_uniform_data(size):
     return np.random.uniform(0, 1, size)
 
 class LFUCache:
-    def _init_(self, capacity):
+    def __init__(self, capacity):
         self.capacity = capacity
         self.cache = {}
         self.freq = defaultdict(int)
@@ -25,16 +25,15 @@ class LFUCache:
     def access(self, obj):
         if obj in self.cache:
             self.freq[obj] += 1
-            return True  # Cache hit
+            return True  
         else:
             if len(self.cache) >= self.capacity:
-                # Remover o objeto menos frequentemente usado
                 lfu_obj = min(self.cache, key=lambda k: self.freq[k])
                 del self.cache[lfu_obj]
                 del self.freq[lfu_obj]
             self.cache[obj] = True
             self.freq[obj] = 1
-            return False  # Cache miss
+            return False 
 
 def simulate_requests(popularity_data, cache):
     hits = 0
@@ -86,5 +85,6 @@ def main():
 
     plot_results(results)
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     main()
+
